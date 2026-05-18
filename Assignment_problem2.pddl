@@ -4,24 +4,30 @@
   (:objects 
     my-kettle - kettle
     my-heater - heater
-    ;;my-tap - dispenser
-    cup1 - cup 
-    cup2 - cup  
+    cup1 cup2 - cup
+    my-tea - tea-bag
+    my-herbal - herbal-bag
   )
 
   (:init
     (handempty)
-    (on-heater my-kettle my-heater)
-    (= (temperature my-kettle) 20)  
-    (= (water-volume my-kettle) 500)
+    (heater-empty my-heater)
+    (on-table my-kettle)
+    
+    (= (temperature my-kettle) 20)
+    (= (water-volume my-kettle) 500) 
+
     (cup-empty cup1)
     (cup-empty cup2)
+
+    (ingredient-available my-tea)
+    (ingredient-available my-herbal)
   )
 
   (:goal
     (and
-      (cup-filled-warm cup1)
-      (cup-filled-boiled cup2)
+      (beverage-ready-warm-tea cup1)
+      (beverage-ready-hot-infusion cup2)
     )
   )
 )
