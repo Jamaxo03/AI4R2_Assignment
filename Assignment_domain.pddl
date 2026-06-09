@@ -167,7 +167,7 @@
     :parameters (?c - cup ?i - herbal-bag)
     :precondition (and 
       (not (cup-empty ?c))            
-      (holding-ingredient ?i))
+      (holding-ingredient ?i)
       (> (temperature-cup ?c) 65)
       (<= (temperature-cup ?c) 90))
     :effect (and 

@@ -1,45 +1,37 @@
-(define (problem multi-everything)
+(define (problem q1-immediate-heating)
   (:domain domestic-service-robot)
 
   (:objects 
-    k1 k2 - kettle
-    h1 h2 - heater
-    tap - dispenser
+    k1 - kettle
+    h1 - heater
+    d1 - dispenser
     
-    cup1 cup2 cup3 - cup
-    
-    my-drops - flavor-drop
-    my-tea - tea-bag
-    my-herbal - herbal-bag
+    cup1 cup2 - cup
+    tea1 tea2 - tea-bag
   )
 
   (:init
     (handempty)
     
     (heater-empty h1)
-    (heater-empty h2)
     
     (on-table k1)
-    (on-table k2)
     (= (temperature k1) 20)
     (= (water-volume k1) 0) 
-    (= (temperature k2) 20)
-    (= (water-volume k2) 0) 
-
+    
     (cup-empty cup1)
     (cup-empty cup2)
-    (cup-empty cup3)
+    (= (temperature-cup cup1) 20)
+    (= (temperature-cup cup2) 20)
 
-    (ingredient-available my-drops)
-    (ingredient-available my-tea)
-    (ingredient-available my-herbal)
+    (ingredient-available tea1)
+    (ingredient-available tea2)
   )
 
   (:goal
     (and
-      (beverage-ready-flavored-water cup1)
+      (beverage-ready-warm-tea cup1)
       (beverage-ready-warm-tea cup2)
-      (beverage-ready-hot-infusion cup3)
     )
   )
 )

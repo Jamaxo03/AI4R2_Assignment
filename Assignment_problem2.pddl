@@ -1,27 +1,34 @@
-(define (problem ordering)
+(define (problem q2-ordering-matters)
   (:domain domestic-service-robot)
 
   (:objects 
-    my-kettle - kettle
-    my-heater - heater
+    k1 - kettle
+    h1 - heater
+    ;; no dipenser
+    
     cup1 cup2 - cup
-    my-tea - tea-bag
-    my-herbal - herbal-bag
+    
+    tea1 - tea-bag
+    herbal1 - herbal-bag
   )
 
   (:init
     (handempty)
-    (heater-empty my-heater)
-    (on-table my-kettle)
     
-    (= (temperature my-kettle) 20)
-    (= (water-volume my-kettle) 500) 
-
+    (heater-empty h1)
+    
+    (on-table k1)
+    
+    (= (temperature k1) 20)
+    (= (water-volume k1) 500) 
+    
     (cup-empty cup1)
     (cup-empty cup2)
+    (= (temperature-cup cup1) 20)
+    (= (temperature-cup cup2) 20)
 
-    (ingredient-available my-tea)
-    (ingredient-available my-herbal)
+    (ingredient-available tea1)
+    (ingredient-available herbal1)
   )
 
   (:goal
