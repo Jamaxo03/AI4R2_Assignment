@@ -21,9 +21,6 @@
     (heater-on ?h - heater)
     
     (ingredient-available ?i - ingredient)
-    (cup-filled-cold ?c - cup)
-    (cup-filled-warm ?c - cup)
-    (cup-filled-hot ?c - cup)
     (beverage-ready-flavored-water ?c - cup)
     (beverage-ready-warm-tea ?c - cup)
     (beverage-ready-hot-infusion ?c - cup)
@@ -31,6 +28,7 @@
 
   (:functions
     (temperature ?k - kettle)
+    (temperature-cup ?c - cup)
     (water-volume ?k - kettle)
   )
   
@@ -128,52 +126,24 @@
     :effect (not (heater-on ?h))
   )
   
-  (:action pour-cold
+  (:action pour-water
     :parameters (?k - kettle ?c - cup)
     :precondition (and 
       (holding ?k)
       (cup-empty ?c)
-      (>= (water-volume ?k) 250)
-      (<= (temperature ?k) 30))
+      (>= (water-volume ?k) 250))
     :effect (and 
       (decrease (water-volume ?k) 250)
-      (cup-filled-cold ?c)
-      (not (cup-empty ?c)))
-  )
-
-  (:action pour-warm
-    :parameters (?k - kettle ?c - cup)
-    :precondition (and 
-      (holding ?k)
-      (cup-empty ?c)
-      (>= (water-volume ?k) 250)
-      (> (temperature ?k) 30)
-      (<= (temperature ?k) 65))
-    :effect (and 
-      (decrease (water-volume ?k) 250)
-      (cup-filled-warm ?c)
-      (not (cup-empty ?c)))
-  )
-
-  (:action pour-hot
-    :parameters (?k - kettle ?c - cup)
-    :precondition (and 
-      (holding ?k)
-      (cup-empty ?c)
-      (>= (water-volume ?k) 250)
-      (> (temperature ?k) 65)
-      (<= (temperature ?k) 100))
-    :effect (and 
-      (decrease (water-volume ?k) 250)
-      (cup-filled-hot ?c)
-      (not (cup-empty ?c)))
+      (not (cup-empty ?c))
+      (assign (temperature-cup ?c) (temperature ?k)))
   )
   
   (:action prepare-flavored-water
     :parameters (?c - cup ?i - flavor-drop)
     :precondition (and 
-      (cup-filled-cold ?c)           
-      (holding-ingredient ?i))
+      (not (cup-empty ?c))           
+      (holding-ingredient ?i)
+      (<= (temperature-cup ?c) 30))
     :effect (and 
       (beverage-ready-flavored-water ?c)
       (handempty)
@@ -183,8 +153,10 @@
   (:action prepare-warm-tea
     :parameters (?c - cup ?i - tea-bag)
     :precondition (and 
-      (cup-filled-warm ?c)           
-      (holding-ingredient ?i))
+      (not (cup-empty ?c))           
+      (holding-ingredient ?i)
+      (> (temperature-cup ?c) 30)
+      (<= (temperature-cup ?c) 65))
     :effect (and 
       (beverage-ready-warm-tea ?c)
       (handempty)
@@ -194,8 +166,10 @@
   (:action prepare-hot-infusion
     :parameters (?c - cup ?i - herbal-bag)
     :precondition (and 
-      (cup-filled-hot ?c)            
+      (not (cup-empty ?c))            
       (holding-ingredient ?i))
+      (> (temperature-cup ?c) 65)
+      (<= (temperature-cup ?c) 90))
     :effect (and 
       (beverage-ready-hot-infusion ?c)
       (handempty)

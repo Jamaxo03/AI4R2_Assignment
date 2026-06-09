@@ -34,14 +34,23 @@
     (temperature ?k - kettle)
     (temperature-cup ?c - cup)
     (water-volume ?k - kettle)
+    (robot-cooldown)
+  )
+  
+  (:process robot-cooling-down
+    :parameters ()
+    :precondition (> (robot-cooldown) 0.0)
+    :effect (decrease (robot-cooldown) (* #t 1.0)) 
   )
   
   (:action pick-from-table
     :parameters (?k - kettle)
-    :precondition (and 
+    :precondition (and
+      (<= (robot-cooldown) 0.0)
       (handempty) 
       (on-table ?k))
-    :effect (and 
+    :effect (and
+      (assign (robot-cooldown) 1.0)
       (holding ?k) 
       (not (handempty))
       (not (on-table ?k)))
@@ -49,8 +58,11 @@
   
   (:action place-on-table
     :parameters (?k - kettle)
-    :precondition (holding ?k)
+    :precondition (and
+      (<= (robot-cooldown) 0.0)
+      (holding ?k))
     :effect (and 
+      (assign (robot-cooldown) 1.0)
       (on-table ?k)
       (handempty)
       (not (holding ?k)))
@@ -58,11 +70,13 @@
 
   (:action pick-from-heater
     :parameters (?k - kettle ?h - heater)
-    :precondition (and 
+    :precondition (and
+      (<= (robot-cooldown) 0.0)
       (handempty) 
       (on-heater ?k ?h) 
       (not (heater-on ?h)))
     :effect (and 
+      (assign (robot-cooldown) 1.0)
       (holding ?k) 
       (not (handempty))
       (not (on-heater ?k ?h)) 
@@ -71,10 +85,12 @@
   
   (:action place-on-heater
     :parameters (?k - kettle ?h - heater)
-    :precondition (and 
+    :precondition (and
+      (<= (robot-cooldown) 0.0)
       (holding ?k)
       (heater-empty ?h))
     :effect (and 
+      (assign (robot-cooldown) 1.0)
       (on-heater ?k ?h)
       (handempty)
       (not (holding ?k))
@@ -83,44 +99,44 @@
   
   (:action pick-from-dispenser
     :parameters (?k - kettle ?d - dispenser)
-    :precondition (and 
+    :precondition (and
+      (<= (robot-cooldown) 0.0)
       (handempty) 
       (on-dispenser ?k ?d) 
-      (not (dispenser-on ?d))
-    )
+      (not (dispenser-on ?d)))
     :effect (and 
+      (assign (robot-cooldown) 1.0)
       (not (handempty))
       (not (on-dispenser ?k ?d)) 
       (holding ?k) 
-      (dispenser-empty ?d)
-    )
+      (dispenser-empty ?d))
   )
   
   (:action place-on-dispenser
     :parameters (?k - kettle ?d - dispenser)
-    :precondition (and 
+    :precondition (and
+      (<= (robot-cooldown) 0.0)
       (holding ?k)
-      (dispenser-empty ?d)
-    )
+      (dispenser-empty ?d))
     :effect (and 
+      (assign (robot-cooldown) 1.0)
       (not (holding ?k))
       (not (dispenser-empty ?d))
       (on-dispenser ?k ?d)
-      (handempty)
-    )
+      (handempty))
   )
   
   (:action pick-ingredient
     :parameters (?i - ingredient)
-    :precondition (and 
+    :precondition (and
+      (<= (robot-cooldown) 0.0)
       (handempty) 
-      (ingredient-available ?i)
-    )
+      (ingredient-available ?i))
     :effect (and 
+      (assign (robot-cooldown) 1.0)
       (not (handempty))
       (not (ingredient-available ?i))
-      (holding-ingredient ?i)
-    )
+      (holding-ingredient ?i))
   )
 
   (:action turn-on-dispenser
@@ -187,8 +203,7 @@
     :precondition (and 
       (heater-on ?h)
       (on-heater ?k ?h)
-      (>= (temperature ?k) 100.0)
-    )
+      (>= (temperature ?k) 100.0))
     :effect (not (heater-on ?h))
   )
 
@@ -220,59 +235,59 @@
   
   (:action pour-water
     :parameters (?k - kettle ?c - cup)
-    :precondition (and 
+    :precondition (and
+      (<= (robot-cooldown) 0.0)
       (holding ?k)
       (cup-empty ?c)
-      (>= (water-volume ?k) 250.0)
-    )
-    :effect (and 
+      (>= (water-volume ?k) 250.0))
+    :effect (and
+      (assign (robot-cooldown) 1.0)
       (not (cup-empty ?c))
       (decrease (water-volume ?k) 250.0)
-      (assign (temperature-cup ?c) (temperature ?k)) 
-    )
+      (assign (temperature-cup ?c) (temperature ?k)))
   )
   
   (:action prepare-flavored-water
     :parameters (?c - cup ?i - flavor-drop)
-    :precondition (and 
+    :precondition (and
+      (<= (robot-cooldown) 0.0)
       (not (cup-empty ?c))            
       (holding-ingredient ?i)
-      (<= (temperature-cup ?c) 30.0)
-    )
-    :effect (and 
+      (<= (temperature-cup ?c) 30.0))
+    :effect (and
+      (assign (robot-cooldown) 1.0)
       (not (holding-ingredient ?i))
       (handempty)
-      (beverage-ready-flavored-water ?c)
-    )
+      (beverage-ready-flavored-water ?c))
   )
 
   (:action prepare-warm-tea
     :parameters (?c - cup ?i - tea-bag)
-    :precondition (and 
+    :precondition (and
+      (<= (robot-cooldown) 0.0)
       (not (cup-empty ?c))            
       (holding-ingredient ?i)
       (> (temperature-cup ?c) 30.0)
-      (<= (temperature-cup ?c) 65.0)
-    )
-    :effect (and 
+      (<= (temperature-cup ?c) 65.0))
+    :effect (and
+      (assign (robot-cooldown) 1.0)
       (not (holding-ingredient ?i))
       (handempty)
-      (beverage-ready-warm-tea ?c)
-    )
+      (beverage-ready-warm-tea ?c))
   )
 
   (:action prepare-hot-infusion
     :parameters (?c - cup ?i - herbal-bag)
-    :precondition (and 
+    :precondition (and
+      (<= (robot-cooldown) 0.0)
       (not (cup-empty ?c))            
       (holding-ingredient ?i)
       (> (temperature-cup ?c) 65.0)
-      (<= (temperature-cup ?c) 90.0)
-    )
+      (<= (temperature-cup ?c) 90.0))
     :effect (and 
+      (assign (robot-cooldown) 1.0)
       (not (holding-ingredient ?i))
       (handempty)
-      (beverage-ready-hot-infusion ?c)
-    )
+      (beverage-ready-hot-infusion ?c))
   )
 )
