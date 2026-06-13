@@ -14,6 +14,7 @@
     (handempty)
     
     (heater-empty h1)
+    (dispenser-empty d1)
     
     (on-table k1)
     (= (temperature k1) 20)

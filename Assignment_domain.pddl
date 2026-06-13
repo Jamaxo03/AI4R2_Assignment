@@ -8,16 +8,19 @@
   )
 
   (:predicates
-    ;; empty states
+
     (handempty)
     (heater-empty ?h - heater)
     (cup-empty ?c - cup)
+    (dispenser-empty ?d - dispenser)
     
     (holding ?k - kettle)
     (holding-ingredient ?i - ingredient)
     
     (on-table ?k - kettle)
     (on-heater ?k - kettle ?h - heater)
+    (on-dispenser ?k - kettle ?d - dispenser)
+    
     (heater-on ?h - heater)
     
     (ingredient-available ?i - ingredient)
@@ -77,6 +80,30 @@
       (not (heater-empty ?h)))
   )
   
+  (:action pick-from-dispenser
+    :parameters (?k - kettle ?d - dispenser)
+    :precondition (and 
+      (handempty) 
+      (on-dispenser ?k ?d))
+    :effect (and 
+      (holding ?k) 
+      (not (handempty))
+      (not (on-dispenser ?k ?d)) 
+      (dispenser-empty ?d))
+  )
+  
+  (:action place-on-dispenser
+    :parameters (?k - kettle ?d - dispenser)
+    :precondition (and 
+      (holding ?k)
+      (dispenser-empty ?d))
+    :effect (and 
+      (on-dispenser ?k ?d)
+      (handempty)
+      (not (holding ?k))
+      (not (dispenser-empty ?d)))
+  )
+  
   (:action pick-ingredient
     :parameters (?i - ingredient)
     :precondition (and 
@@ -91,7 +118,8 @@
   (:action fill-kettle
     :parameters (?k - kettle ?d - dispenser)
     :precondition (and
-      (holding ?k)
+      (handempty)
+      (on-dispenser ?k ?d)
       (<= (water-volume ?k) 750))
     :effect (and
       (increase (water-volume ?k) 250)
@@ -155,7 +183,7 @@
     :precondition (and 
       (not (cup-empty ?c))           
       (holding-ingredient ?i)
-      (> (temperature-cup ?c) 30)
+      (> (temperature-cup ?c) 55)
       (<= (temperature-cup ?c) 65))
     :effect (and 
       (beverage-ready-warm-tea ?c)
@@ -168,8 +196,8 @@
     :precondition (and 
       (not (cup-empty ?c))            
       (holding-ingredient ?i)
-      (> (temperature-cup ?c) 65)
-      (<= (temperature-cup ?c) 90))
+      (> (temperature-cup ?c) 85)
+      (<= (temperature-cup ?c) 95))
     :effect (and 
       (beverage-ready-hot-infusion ?c)
       (handempty)

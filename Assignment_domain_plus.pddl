@@ -8,7 +8,7 @@
   )
 
   (:predicates
-    ;; empty states
+
     (handempty)
     (heater-empty ?h - heater)
     (cup-empty ?c - cup)
@@ -148,7 +148,7 @@
       (not (dispenser-on ?d)))
     :effect (and 
       (dispenser-on ?d)
-      (assign (temperature ?k) 20.0)) ;; L'ingresso di acqua fresca riazzera la temperatura (NON GESTIBILE)
+      (assign (temperature ?k) 20.0)) 
   )
   
   (:process water-filling
@@ -156,7 +156,7 @@
     :precondition (and
       (dispenser-on ?d)
       (on-dispenser ?k ?d))
-    :effect (increase (water-volume ?k) (* #t 100.0)) ;; Si riempie di 100ml al secondo
+    :effect (increase (water-volume ?k) (* #t 100.0)) 
   )
 
   (:event stop-filling-safety
@@ -230,7 +230,7 @@
     :precondition (and
       (not (cup-empty ?c))
       (> (temperature-cup ?c) 20.0))
-    :effect (decrease (temperature-cup ?c) (* #t 1.0)) ;; più velocemente rispetto al kettle
+    :effect (decrease (temperature-cup ?c) (* #t 1.0))
   )
   
   (:action pour-water
@@ -267,7 +267,7 @@
       (<= (robot-cooldown) 0.0)
       (not (cup-empty ?c))            
       (holding-ingredient ?i)
-      (> (temperature-cup ?c) 30.0)
+      (> (temperature-cup ?c) 55.0)
       (<= (temperature-cup ?c) 65.0))
     :effect (and
       (assign (robot-cooldown) 1.0)
@@ -282,8 +282,8 @@
       (<= (robot-cooldown) 0.0)
       (not (cup-empty ?c))            
       (holding-ingredient ?i)
-      (> (temperature-cup ?c) 65.0)
-      (<= (temperature-cup ?c) 90.0))
+      (> (temperature-cup ?c) 85.0)
+      (<= (temperature-cup ?c) 95.0))
     :effect (and 
       (assign (robot-cooldown) 1.0)
       (not (holding-ingredient ?i))
