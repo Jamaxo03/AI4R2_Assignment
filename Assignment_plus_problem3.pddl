@@ -1,7 +1,7 @@
-(define (problem plus)
+(define (problem safety-events)
   (:domain domestic-service-robot-plus)
   (:objects 
-    k1 k2 - kettle
+    k1 k2  - kettle
     h1 - heater
     d1 - dispenser
     c-water c-tea - cup
@@ -9,6 +9,7 @@
     tea1 - tea-bag
   )
   (:init
+    
     (handempty)
     (cup-empty c-water)
     (cup-empty c-tea)
@@ -18,11 +19,13 @@
     (ingredient-available drops1)
     (ingredient-available tea1)
 
+    
     (on-dispenser k1 d1)
     (dispenser-on d1)
     (= (water-volume k1) 900.0)
     (= (temperature k1) 20.0)
 
+    
     (on-heater k2 h1)
     (heater-on h1)
     (= (water-volume k2) 500.0)

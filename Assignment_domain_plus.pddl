@@ -142,11 +142,13 @@
   (:action turn-on-dispenser
     :parameters (?d - dispenser ?k - kettle)
     :precondition (and
+      (<= (robot-cooldown) 0.0)
       (handempty) 
       (on-dispenser ?k ?d)
       (< (water-volume ?k) 1000.0)
       (not (dispenser-on ?d)))
-    :effect (and 
+    :effect (and
+      (assign (robot-cooldown) 1.0)
       (dispenser-on ?d)
       (assign (temperature ?k) 20.0)) 
   )
@@ -173,20 +175,26 @@
   (:action turn-off-dispenser
     :parameters (?d - dispenser ?k - kettle)
     :precondition (and
+      (<= (robot-cooldown) 0.0)
       (handempty) 
       (on-dispenser ?k ?d)
       (dispenser-on ?d))
-    :effect (not (dispenser-on ?d))
+    :effect (and
+      (assign (robot-cooldown) 1.0)
+      (not (dispenser-on ?d)))
   )
 
   (:action turn-on-heater
     :parameters (?h - heater ?k - kettle)
     :precondition (and
+      (<= (robot-cooldown) 0.0)
       (handempty) 
       (on-heater ?k ?h)
       (> (water-volume ?k) 0)
       (not (heater-on ?h)))
-    :effect (heater-on ?h)
+    :effect (and
+      (assign (robot-cooldown) 1.0)
+      (heater-on ?h))
   )
 
   (:process heating
@@ -210,10 +218,13 @@
   (:action turn-off-heater
     :parameters (?h - heater ?k - kettle)
     :precondition (and
+      (<= (robot-cooldown) 0.0)
       (handempty) 
       (on-heater ?k ?h)
       (heater-on ?h))
-    :effect (not (heater-on ?h))
+    :effect (and
+      (assign (robot-cooldown) 1.0)
+      (not (heater-on ?h)))
   )
   
   (:process cooling-kettle
