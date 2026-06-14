@@ -195,7 +195,7 @@
       (heater-on ?h)
       (on-heater ?k ?h)
       (> (water-volume ?k) 0))
-    :effect (increase (temperature ?k) (* #t 2.0)) 
+    :effect (increase (temperature ?k) (* #t 2.5)) 
   )
   
   (:event overheat-safety-switch-off
@@ -219,7 +219,6 @@
   (:process cooling-kettle
     :parameters (?k - kettle)
     :precondition (and
-      (on-table ?k)
       (> (water-volume ?k) 0.0)
       (> (temperature ?k) 20.0))
     :effect (decrease (temperature ?k) (* #t 0.5))
